@@ -58,52 +58,81 @@ const tools = computed<ToolCategory[]>(() => [
         </div>
 
         <CollapsibleToolMenu :tools-by-category="tools" />
-
-        <div class="footer">
-
-          <div>
-            © {{ new Date().getFullYear() }}
-            <c-link target="_blank" rel="noopener" href="https://dev.fktool.com">
-              dev.fktool.com
-            </c-link>
-          </div>
-        </div>
       </div>
     </template>
 
     <template #content>
-      <div flex items-center justify-center gap-2>
-        <c-button
-          circle
-          variant="text"
-          :aria-label="$t('home.toggleMenu')"
-          @click="styleStore.isMenuCollapsed = !styleStore.isMenuCollapsed"
-        >
-          <NIcon size="25" :component="Menu2" />
-        </c-button>
-
-        <c-tooltip :tooltip="$t('home.home')" position="bottom">
-          <c-button to="/" circle variant="text" :aria-label="$t('home.home')">
-            <NIcon size="25" :component="Home2" />
+      <div flex items-center justify-between px-4 py-2 sticky top-0 z-20 bg-background op-95 backdrop-blur>
+        <div flex items-center gap-2>
+          <c-button
+            circle
+            variant="text"
+            :aria-label="$t('home.toggleMenu')"
+            @click="styleStore.isMenuCollapsed = !styleStore.isMenuCollapsed"
+          >
+            <NIcon size="24" :component="Menu2" />
           </c-button>
-        </c-tooltip>
 
-        <c-tooltip :tooltip="$t('home.uiLib')" position="bottom">
-          <c-button v-if="config.app.env === 'development'" to="/c-lib" circle variant="text" :aria-label="$t('home.uiLib')">
-            <icon-mdi:brush-variant text-20px />
-          </c-button>
-        </c-tooltip>
+          <c-tooltip :tooltip="$t('home.home')" position="bottom">
+            <c-button to="/" circle variant="text" :aria-label="$t('home.home')">
+              <NIcon size="24" :component="Home2" />
+            </c-button>
+          </c-tooltip>
 
-        <command-palette />
-
-        <locale-selector v-if="!styleStore.isSmallScreen" />
-
-        <div>
-          <NavbarButtons v-if="!styleStore.isSmallScreen" />
+          <c-tooltip :tooltip="$t('home.uiLib')" position="bottom">
+            <c-button v-if="config.app.env === 'development'" to="/c-lib" circle variant="text" :aria-label="$t('home.uiLib')">
+              <icon-mdi:brush-variant text-20px />
+            </c-button>
+          </c-tooltip>
         </div>
 
+        <div flex-1 max-w-600px mx-4>
+          <command-palette />
+        </div>
+
+        <div flex items-center gap-2>
+          <locale-selector v-if="!styleStore.isSmallScreen" />
+          <NavbarButtons v-if="!styleStore.isSmallScreen" />
+        </div>
       </div>
-      <slot />
+      <div class="main-content">
+        <slot />
+
+        <div class="footer-content mt-10 border-t border-neutral-200 dark:border-neutral-800 pt-8 pb-12">
+          <div flex flex-wrap justify-between gap-8>
+            <div max-w-300px>
+              <div text-lg font-bold mb-4>IT-TOOLS</div>
+              <div text-neutral-500 text-sm>
+                {{ $t('home.subtitle') }}
+              </div>
+            </div>
+
+            <div flex gap-12>
+              <div>
+                <div font-bold mb-4>{{ $t('home.footer.links') }}</div>
+                <div flex flex-col gap-2 text-sm text-neutral-500>
+                  <c-link href="https://github.com/mzlong/it-tools" target="_blank">GitHub</c-link>
+                  <c-link href="https://x.com/ittoolsdottech" target="_blank">Twitter / X</c-link>
+                </div>
+              </div>
+              <div>
+                <div font-bold mb-4>{{ $t('home.footer.about') }}</div>
+                <div flex flex-col gap-2 text-sm text-neutral-500>
+                  <RouterLink to="/about" class="c-link">About</RouterLink>
+                  <!-- <c-link href="https://dev.fktool.com" target="_blank">dev.fktool.com</c-link> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div mt-12 pt-8 border-t border-neutral-100 dark:border-neutral-900 text-center text-xs text-neutral-400>
+            © {{ new Date().getFullYear() }} IT-TOOLS. Released under GPLv3 License.
+            <div mt-2>
+              Version: {{ version }} ({{ commitSha }})
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
   </MenuLayout>
 </template>
@@ -119,6 +148,15 @@ const tools = computed<ToolCategory[]>(() => [
 //     background-position: 0 0, @position @position;
 //     background-size: @size @size;
 // }
+
+.main-content {
+  padding: 26px;
+  flex: 1;
+
+  @media (max-width: 640px) {
+    padding: 16px;
+  }
+}
 
 .support-button {
   background: rgb(37, 99, 108);
